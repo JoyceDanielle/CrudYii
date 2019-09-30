@@ -9,6 +9,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
+
 /**
  * ProdutoController implements the CRUD actions for Produto model.
  */
@@ -66,12 +67,16 @@ class ProdutoController extends Controller
     {
         $model = new Produto();
 
+        $todos = $model->getCategorias();
+        
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('create', [
             'model' => $model,
+            'todos' => $todos
         ]);
     }
 
@@ -86,12 +91,15 @@ class ProdutoController extends Controller
     {
         $model = $this->findModel($id);
 
+        $todos = $model->getCategorias();
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
             'model' => $model,
+            'todos' => $todos
         ]);
     }
 

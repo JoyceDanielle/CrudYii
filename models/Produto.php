@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use app\models\Categoria;
 
 /**
  * This is the model class for table "produto".
@@ -47,7 +48,7 @@ class Produto extends \yii\db\ActiveRecord
             'id' => 'ID',
             'nome' => 'Nome',
             'descricao' => 'Descricao',
-            'categoriaId' => 'Categoria ID',
+            'categoriaId' => 'Categoria',
         ];
     }
 
@@ -57,5 +58,18 @@ class Produto extends \yii\db\ActiveRecord
     public function getCategoria()
     {
         return $this->hasOne(Categoria::className(), ['id' => 'categoriaId']);
+    }
+
+    public function getCategorias()
+    {
+        return Categoria::find()->all();
+    }
+
+    public function getNameCategoria()
+    {
+        $query = self::find();
+
+        $query->joinWith('categoria');
+        
     }
 }

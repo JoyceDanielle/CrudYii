@@ -11,6 +11,7 @@ use app\models\Produto;
  */
 class ProdutoSearch extends Produto
 {
+    public $categoria;
     /**
      * {@inheritdoc}
      */
@@ -18,7 +19,7 @@ class ProdutoSearch extends Produto
     {
         return [
             [['id', 'categoriaId'], 'integer'],
-            [['nome', 'descricao'], 'safe'],
+            [['nome', 'descricao', 'categoria'], 'safe'],
         ];
     }
 
@@ -42,11 +43,21 @@ class ProdutoSearch extends Produto
     {
         $query = Produto::find();
 
+        $query->joinWith('categoria');
+
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            //'sort' => ['attributes' => ['firstname', 'lastname', 'groupname', 'email', 'pemail']]
         ]);
+
+        $dataProvider->sort->attributes['categoria'] = [
+            // The tables are the ones our relation are configured to
+            // in my case they are prefixed with "tbl_"
+            'asc' => ['categoria.nome' => SORT_ASC],
+            'desc' => ['categoria.nome' => SORT_DESC],
+        ];
 
         $this->load($params);
 
@@ -57,13 +68,10 @@ class ProdutoSearch extends Produto
         }
 
         // grid filtering conditions
-        $query->andFilterWhere([
-            'id' => $this->id,
-            'categoriaId' => $this->categoriaId,
-        ]);
 
-        $query->andFilterWhere(['like', 'nome', $this->nome])
-            ->andFilterWhere(['like', 'descricao', $this->descricao]);
+        $query->andFilterWhere(['like', 'produto.nome', $this->nome])
+            ->andFilterWhere(['like', 'produto.descricao', $this->descricao])
+            ->andFilterWhere(['like', 'categoria.nome', $this->categoria]);
 
         return $dataProvider;
     }
